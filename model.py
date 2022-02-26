@@ -175,15 +175,20 @@ def discover_path(relative_path: str):
     actual_path = os.path.join(dir, *split_path)
     return actual_path
 
-if __name__ == '__main__':
-    print("Fuck off, that's a test..")
-
-
-    ratings = read_from_csv(
+def read_ratings_from_file():
+    
+    return read_from_csv(
         './movie_data/'+config['RATINGS_FILE'],
         ['user_id', 'movie_id', 'rating', 'timestamp'],
         '\t'
     )
+    
+
+if __name__ == '__main__':
+    print("Fuck off, that's a test..")
+
+
+    ratings = read_ratings_from_file()
 
     movies = read_from_csv(
         './movie_data/'+config['MOVIES_FILE'],
@@ -204,7 +209,5 @@ if __name__ == '__main__':
 
 
     #sc = test_score(X_test, df_ratings)
-
     knn_predict(ratings)
-
     svd_predict(ratings)
