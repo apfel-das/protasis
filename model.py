@@ -11,9 +11,12 @@ from surprise import Reader, Dataset, KNNBasic
 from surprise.model_selection import cross_validate
 from surprise import SVD
 from dotenv import dotenv_values
+from collections import defaultdict
 
 
 config = dotenv_values(".env")
+
+
 
 def test_score(test_data, actual_data: pd.DataFrame):
     users_to_movies = list(zip(test_data['movie_id'], test_data['user_id']))
@@ -36,30 +39,34 @@ def test_score(test_data, actual_data: pd.DataFrame):
     #return the root_mean_sq_error.
     return np.sqrt(mean_squared_error(np.array(actual), np.array(predicted_ratings)))
 
-     
 
-def svd_predict(ratings: pd.DataFrame):
-    #exclude unused column, KNNBasic() function needs data purified to work
-    ratings = ratings.drop(columns='timestamp')
 
-    """
-        Defining/Creating the dataset.
-    """
-    reader = Reader()
 
-    data = Dataset.load_from_df(ratings, reader)
+def get_top_predictions(predictions: list, n = 10):
+    top_n = defaultdict(list)
+    for uid, iid, true_r, est, _ in predictions:
+        top_n[uid].append((iid, est))
 
-    algo = SVD()
+    # Then sort the predictions for each user and retrieve the k highest ones.
+    for uid, user_ratings in top_n.items():
+        user_ratings.sort(key=lambda x: x[1], reverse=True)
+        top_n[uid] = user_ratings[:n]
 
-    r = cross_validate(algo, data, measures=['RMSE'], cv = 3)
+    return top_n
 
-    print(r)
-    
+
+
+
     
 """
     Predicts the rating score for a given <user_id, movie_id> pair based on the KNN algorithm.
 """
-def knn_predict(ratings: pd.DataFrame):
+def predict_items(ratings: pd.DataFrame, algo: str):
+
+    allowed_algos = ['knn', 'svd']
+
+    if algo not in allowed_algos:
+        return None
 
     #exclude unused column, KNNBasic() function needs data purified to work
     ratings = ratings.drop(columns='timestamp')
@@ -71,12 +78,19 @@ def knn_predict(ratings: pd.DataFrame):
 
     data = Dataset.load_from_df(ratings, reader)
 
-    algo = KNNBasic()
+    """
+        Train, fit, predict..
+    """
 
-    r = cross_validate(algo, data, measures=['RMSE', 'mae'], cv = 3)
-    
-    print(r)
-    
+    trainset = data.build_full_trainset()
+    algo = KNNBasic() if algo == 'knn' else SVD()
+    algo.fit(trainset)
+
+    #predict ratings for all pairs (user, item/movie) that are NOT in the training set.
+    testset = trainset.build_anti_testset()
+    predictions = algo.test(testset)
+        
+    return predictions
 
 
 
@@ -124,28 +138,6 @@ def weighted_avg_predict(ratings: pd.DataFrame, movie_id: int, user_id: int):
         return 2.5  
         
 
-
-
-"""
-    Samples the dataset based on a collumn.
-"""
-def sample_dataset(coll_name: str, data: pd.DataFrame, sample_factor: float):
-    """
-        No data to work with, dummies lead the way. 
-    """
-    try:
-
-        #Assign X as the original ratings dataframe and y as the user_id column of ratings.
-        X = data.copy()
-        y = data[coll_name]
-        #Split into training and test datasets, stratified along user_id
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = sample_factor, stratify=y, random_state=42)
-
-        print("GG")
-        return [X_train, X_test, y_train, y_test]
-
-    except: 
-        return None
 """
     Reads data from a csv.
     Arguments:
@@ -159,21 +151,11 @@ def sample_dataset(coll_name: str, data: pd.DataFrame, sample_factor: float):
 def read_from_csv(file_name: str, collumns: list, sep: str):
     try:
         data = pd.read_csv(file_name, sep = sep, names = collumns, encoding= 'latin-1')
-        print(data)
         return data
     except:
         print("Exception occured on file: ["+file_name+"]" )
 
 
-""" Discovers the actual file path.
-    Arguments: 
-        - relative_path: {str} A file-path to look for any file.
-"""        
-def discover_path(relative_path: str):
-    dir = os.path.dirname(os.path.abspath(__file__))
-    split_path = relative_path.split("/")
-    actual_path = os.path.join(dir, *split_path)
-    return actual_path
 
 def read_ratings_from_file():
     
@@ -182,32 +164,47 @@ def read_ratings_from_file():
         ['user_id', 'movie_id', 'rating', 'timestamp'],
         '\t'
     )
-    
 
-if __name__ == '__main__':
-    print("Fuck off, that's a test..")
-
-
-    ratings = read_ratings_from_file()
-
-    movies = read_from_csv(
+def read_movies_from_file():
+    return read_from_csv(
         './movie_data/'+config['MOVIES_FILE'],
         ['movie_id', 'title' ,'release date','video release date', 'IMDb URL', 'unknown', 'Action', 'Adventure',
         'Animation', 'Children\'s', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Fantasy',
         'Film-Noir', 'Horror', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western'],
         '|'
     )
-    
-    users = read_from_csv(
+
+def read_users_from_file():
+    return read_from_csv(
         './movie_data/'+config['USERS_FILE'],
         ['user_id', 'age', 'sex', 'occupation', 'zip_code'],
         '|'
     )
 
-    [X_train, X_test, y_train, y_test] = sample_dataset('user_id', ratings, 0.25)
-    df_ratings = X_train.pivot(index='user_id', columns='movie_id', values='rating')
+def predict_top_for_user(uid: int, predictions: defaultdict, len: int):
+
+    if not predictions:
+        return None
+    if len <= 0:
+        return None
+
+    items = []
+
+    top_n = get_top_predictions(predictions, len)
+
+    # List the recommended items for each user
+    for u, user_ratings in top_n.items():
+        if uid == u:
+            for el in user_ratings:
+                items.append(el[0])
+           
+    return items
 
 
-    #sc = test_score(X_test, df_ratings)
-    knn_predict(ratings)
-    svd_predict(ratings)
+
+
+
+
+    
+    
+    
