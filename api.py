@@ -1,9 +1,20 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from model import *
 import json
 
 app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 movies = read_movies_from_file()
@@ -15,7 +26,6 @@ users = read_users_from_file()
 """
 k = predict_items(ratings, 'knn')
 s = predict_items(ratings, 'svd')
-
 
 @app.get("/status")
 def get_status():
