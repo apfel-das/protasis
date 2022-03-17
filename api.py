@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.openapi.utils import get_openapi
 from model import *
-import json
 
 app = FastAPI()
 
@@ -160,7 +159,7 @@ def get_recommendations_knn(user_id: str):
     
     try:
         uid = int(user_id)
-        #return JSONResponse(predict_top_for_user(uid, k, 10))
+        return JSONResponse(predict_top_for_user(uid, k, 10))
 
     except:
         return JSONResponse(None)
@@ -170,7 +169,7 @@ def get_recommendations_svd(user_id: str):
     
     try:
         uid = int(user_id)
-        #return JSONResponse(predict_top_for_user(uid, s, 10))
+        return JSONResponse(predict_top_for_user(uid, s, 10))
 
     except:
         return JSONResponse(None)
