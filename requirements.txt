@@ -6,3 +6,4 @@ scikit_learn==1.0.2
 scikit_surprise==1.1.1
 surprise==0.1
 tqdm==4.62.3
+gunicorn===<latest-version>
