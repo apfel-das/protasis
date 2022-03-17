@@ -2,12 +2,12 @@ from pydoc import describe
 from traceback import print_tb
 import numpy as np
 import pandas as pd
-import os
-from tqdm import tqdm
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
-from surprise import Reader, Dataset, KNNBasic
+from surprise import Reader
+from surpise import Dataset 
+from surprise import KNNBasic
 from surprise.model_selection import cross_validate
 from surprise import SVD
 from dotenv import dotenv_values
@@ -28,7 +28,7 @@ def test_score(test_data, actual_data: pd.DataFrame):
     """
         This should take time, have some coffe and chill..
     """
-    for (movie, user) in tqdm(users_to_movies, desc= "Calculating predicitions..."):
+    for (movie, user) in users_to_movies:
         rating = weighted_avg_predict(actual_data, movie, user)
         predicted_ratings.append(rating)
     
