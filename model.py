@@ -6,7 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 from surprise import Reader
-from surpise import Dataset 
+from surprise import Dataset 
 from surprise import KNNBasic
 from surprise.model_selection import cross_validate
 from surprise import SVD
