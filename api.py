@@ -175,3 +175,4 @@ def get_recommendations_svd(user_id: str):
         return JSONResponse(None)
         
 
+print("Done")
