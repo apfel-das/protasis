@@ -1,1 +1,1 @@
-web: uvicorn api:app --host localhost --port 8080 
+web: uvicorn api:app
