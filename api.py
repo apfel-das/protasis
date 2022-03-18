@@ -88,6 +88,7 @@ app.add_middleware(
 
 print("Starting")
 movies = read_movies_from_file()
+print("Done")
 ratings = read_ratings_from_file()
 users = read_users_from_file()
 
@@ -175,4 +176,3 @@ def get_recommendations_svd(user_id: str):
         return JSONResponse(None)
         
 
-print("Done")
