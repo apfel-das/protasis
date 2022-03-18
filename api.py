@@ -86,7 +86,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+print("Starting")
 movies = read_movies_from_file()
 ratings = read_ratings_from_file()
 users = read_users_from_file()
