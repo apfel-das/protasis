@@ -1,1 +1,1 @@
-web:uvicorn --bind :8000 --workers 1 --threads 2 --timeout 0 api:app
+web: uvicorn api:app --bind $PORT --host 0.0.0.0 --workers 1 --threads 2 --timeout 0 
