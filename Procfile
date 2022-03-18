@@ -1,1 +1,1 @@
-web: uvicorn api:app --port $PORT --host 0.0.0.0 --workers 1 --threads 2 --timeout 0 
+web: uvicorn api:app --port $PORT --host 0.0.0.0 
