@@ -86,16 +86,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-print("Starting")
 movies = read_movies_from_file()
 ratings = read_ratings_from_file()
 users = read_users_from_file()
-print("Done")
-
-"""
-    Prepopulate predictions.
-"""
-
 
 
 @app.get("/status")
@@ -161,7 +154,7 @@ def get_recommendations_knn(user_id: str):
     
     try:
         uid = int(user_id)
-        #return JSONResponse(predict_top_for_user(uid, k, 10))
+        return JSONResponse(predict_top_for_user(uid, k, 10))
 
     except:
         return JSONResponse(None)
@@ -171,7 +164,7 @@ def get_recommendations_svd(user_id: str):
     s = predict_items(ratings, 'svd')
     try:
         uid = int(user_id)
-        #return JSONResponse(predict_top_for_user(uid, s, 10))
+        return JSONResponse(predict_top_for_user(uid, s, 10))
 
     except:
         return JSONResponse(None)
