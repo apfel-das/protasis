@@ -95,8 +95,8 @@ print("Done")
 """
     Prepopulate predictions.
 """
-#k = predict_items(ratings, 'knn')
-#s = predict_items(ratings, 'svd')
+k = predict_items(ratings, 'knn')
+s = predict_items(ratings, 'svd')
 
 @app.get("/status")
 def get_status():
