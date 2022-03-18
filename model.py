@@ -5,9 +5,13 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
-from surprise import Reader
-from surprise import Dataset 
-from surprise import KNNBasic
+try:
+
+    from surprise import Reader
+    from surprise import Dataset 
+    from surprise import KNNBasic
+except:
+    print("Shit")
 from surprise.model_selection import cross_validate
 from surprise import SVD
 from dotenv import dotenv_values
