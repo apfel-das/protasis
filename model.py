@@ -18,9 +18,9 @@ from dotenv import dotenv_values
 from collections import defaultdict
 
 
-config = dotenv_values(".env")
-
-
+RATINGS_FILE='u.data'
+MOVIES_FILE='u.item'
+USERS_FILE='u.user'
 
 def test_score(test_data, actual_data: pd.DataFrame):
     users_to_movies = list(zip(test_data['movie_id'], test_data['user_id']))
@@ -164,14 +164,14 @@ def read_from_csv(file_name: str, collumns: list, sep: str):
 def read_ratings_from_file():
     
     return read_from_csv(
-        './movie_data/'+config['RATINGS_FILE'],
+        './movie_data/'+RATINGS_FILE,
         ['user_id', 'movie_id', 'rating', 'timestamp'],
         '\t'
     )
 
 def read_movies_from_file():
     return read_from_csv(
-        './movie_data/'+config['MOVIES_FILE'],
+        './movie_data/'+MOVIES_FILE,
         ['movie_id', 'title' ,'release date','video release date', 'IMDb URL', 'unknown', 'Action', 'Adventure',
         'Animation', 'Children\'s', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Fantasy',
         'Film-Noir', 'Horror', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western'],
@@ -180,7 +180,7 @@ def read_movies_from_file():
 
 def read_users_from_file():
     return read_from_csv(
-        './movie_data/'+config['USERS_FILE'],
+        './movie_data/'+USERS_FILE,
         ['user_id', 'age', 'sex', 'occupation', 'zip_code'],
         '|'
     )
