@@ -94,8 +94,8 @@ users = read_users_from_file()
 """
     Prepopulate predictions.
 """
-k = predict_items(ratings, 'knn')
-s = predict_items(ratings, 'svd')
+#k = predict_items(ratings, 'knn')
+#s = predict_items(ratings, 'svd')
 
 @app.get("/status")
 def get_status():
@@ -159,7 +159,7 @@ def get_recommendations_knn(user_id: str):
     
     try:
         uid = int(user_id)
-        return JSONResponse(predict_top_for_user(uid, k, 10))
+        #return JSONResponse(predict_top_for_user(uid, k, 10))
 
     except:
         return JSONResponse(None)
@@ -169,7 +169,7 @@ def get_recommendations_svd(user_id: str):
     
     try:
         uid = int(user_id)
-        return JSONResponse(predict_top_for_user(uid, s, 10))
+        #return JSONResponse(predict_top_for_user(uid, s, 10))
 
     except:
         return JSONResponse(None)
