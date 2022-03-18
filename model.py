@@ -1,20 +1,13 @@
-from pydoc import describe
-from traceback import print_tb
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
-try:
-
-    from surprise import Reader
-    from surprise import Dataset 
-    from surprise import KNNBasic
-except:
-    print("Shit")
+from surprise import Reader
+from surprise import Dataset 
+from surprise import KNNBasic
 from surprise.model_selection import cross_validate
 from surprise import SVD
-from dotenv import dotenv_values
 from collections import defaultdict
 
 
