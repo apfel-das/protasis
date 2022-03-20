@@ -58,7 +58,7 @@ def get_top_predictions(predictions: list, n = 10):
 """
     Predicts the rating score for a given <user_id, movie_id> pair based on the KNN algorithm.
 """
-def predict_items(ratings: pd.DataFrame, algo: str):
+async def predict_items(ratings: pd.DataFrame, algo: str):
 
     allowed_algos = ['knn', 'svd']
 
