@@ -1,3 +1,4 @@
+from tabnanny import verbose
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
@@ -6,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from surprise import Reader
 from surprise import Dataset 
 from surprise import KNNBasic
+from surprise import dump
 from surprise.model_selection import cross_validate
 from surprise import SVD
 from collections import defaultdict
@@ -14,6 +16,8 @@ from collections import defaultdict
 RATINGS_FILE='u.data'
 MOVIES_FILE='u.item'
 USERS_FILE='u.user'
+SVD_FILE='predictions_svd'
+KNN_FILE='predictions_knn'
 
 def test_score(test_data, actual_data: pd.DataFrame):
     users_to_movies = list(zip(test_data['movie_id'], test_data['user_id']))
@@ -58,7 +62,7 @@ def get_top_predictions(predictions: list, n = 10):
 """
     Predicts the rating score for a given <user_id, movie_id> pair based on the KNN algorithm.
 """
-async def predict_items(ratings: pd.DataFrame, algo: str):
+def predict_items(ratings: pd.DataFrame, algo: str, file: str):
 
     allowed_algos = ['knn', 'svd']
 
@@ -86,7 +90,12 @@ async def predict_items(ratings: pd.DataFrame, algo: str):
     #predict ratings for all pairs (user, item/movie) that are NOT in the training set.
     testset = trainset.build_anti_testset()
     predictions = algo.test(testset)
-        
+
+    """
+        Write result on file.
+    """       
+    dump.dump(file, predictions, verbose= 1)
+
     return predictions
 
 

@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, BackgroundTasks, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.openapi.utils import get_openapi
@@ -95,8 +95,18 @@ print("Done")
 """
     Prepopulate predictions.
 """
-k = predict_items(ratings, 'knn')
-s = predict_items(ratings, 'svd')
+
+k = []
+s = []
+
+def prepoluate_predictions():
+    k = predict_items(ratings, 'knn', 'predictions_knn')
+    s = predict_items(ratings, 'svd', 'predictions_svd')
+
+@app.get("/init")
+async def init_api(background_tasks: BackgroundTasks):
+    background_tasks.add_task(prepoluate_predictions)
+    return JSONResponse({"status":"Initializing model.."})
 
 @app.get("/status")
 def get_status():
@@ -158,19 +168,25 @@ def get_users():
 @app.get("/recommendations/knn/{user_id}")
 def get_recommendations_knn(user_id: str):
     
+    if(len(k) == 0):
+        return JSONResponse({"error": "Model not yet computed or not initialized."})
+
     try:
         uid = int(user_id)
-        #return JSONResponse(predict_top_for_user(uid, k, 10))
+        return JSONResponse(predict_top_for_user(uid, k, 10))
 
     except:
         return JSONResponse(None)
 
 @app.get("/recommendations/svd/{user_id}")
-def get_recommendations_svd(user_id: str):
-    
+def get_recommendations_svd(user_id: str, background_tasks: BackgroundTasks):
+    if(len(s) == 0):
+        print(s)
+        return JSONResponse({"error": "Model not yet computed or not initialized."})
+
     try:
         uid = int(user_id)
-        #return JSONResponse(predict_top_for_user(uid, s, 10))
+        return JSONResponse(predict_top_for_user(uid, s, 10))
 
     except:
         return JSONResponse(None)
