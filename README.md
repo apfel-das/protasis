@@ -1,5 +1,5 @@
 # protasis
-A movie recommendation engine which doesn't yet exist.
+A movie recommendation engine (which doesn't yet exist) made under FastAPI (yup, I like experimenting).
 
 
 ## How to run:
