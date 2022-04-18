@@ -29,6 +29,7 @@ jobs:
           
       - name: Unit testing
         run: |
+          pip3 install requests
           pip3 install pytest
           python3 -m pytest
         
