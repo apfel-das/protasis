@@ -22,9 +22,9 @@ def test_get_users():
     user_object_keys = ['user_id', 'age', 'sex', 'occupation']
 
     response = client.get("/users")
-    assert response.status_code == 200
-    assert len(response.json()) == user_count
-    assert list(response.json()[0].keys()) == user_object_keys
+    assert response.status_code == 200, "Response returned NOT OK!"
+    assert len(response.json()) == user_count, "Response has different element count than expected!"
+    assert list(response.json()[0].keys()) == user_object_keys, "Response has different keys than expected!"
     
 """
     Tests that /movies enpoint is up and working properly.
@@ -34,9 +34,9 @@ def test_get_movies():
     movie_object_keys = ['movie_id', 'title', 'imdb_url']
 
     response = client.get("/movies")
-    assert response.status_code == 200
-    assert len(response.json()) == movie_count
-    assert list(response.json()[0].keys()) == movie_object_keys
+    assert response.status_code == 200, "Response returned NOT OK!"
+    assert len(response.json()) == movie_count, "Response has different element count than expected!"
+    assert list(response.json()[0].keys()) == movie_object_keys, "Response has different keys than expected!"
 
 
 
@@ -48,9 +48,9 @@ def test_get_ratings():
     rating_object_keys = ['user_id', 'movie_id', 'rating']
 
     response = client.get("/ratings")
-    assert response.status_code == 200
-    assert len(response.json()) == rating_count
-    assert list(response.json()[0].keys()) == rating_object_keys
+    assert response.status_code == 200, "Response returned NOT OK!"
+    assert len(response.json()) == rating_count, "Response has different element count than expected!"
+    assert list(response.json()[0].keys()) == rating_object_keys, "Response has different keys than expected!"
 
 
 """
@@ -60,9 +60,9 @@ def test_knn_recommendation_endpoints_return_proper():
     some_id = 571
     response = client.get("/recommendations/knn/"+str(some_id))
 
-    assert response.status_code == 200
-    assert type(response.json()) == list
-    assert len(response.json()) == 10
+    assert response.status_code == 200, "Response returned NOT OK!"
+    assert type(response.json()) == list, "Response is not a list!"
+    assert len(response.json()) == 10, "Response has more elements than expected!"
 
 """
     Tests that /recommendations/svd/some_id enpoint is up and working properly.
@@ -71,9 +71,9 @@ def test_svd_recommendation_endpoints_return_proper():
     some_id = 571
     response = client.get("/recommendations/svd/"+str(some_id))
 
-    assert response.status_code == 200
-    assert type(response.json()) == list
-    assert len(response.json()) == 10
+    assert response.status_code == 200, "Response returned NOT OK!"
+    assert type(response.json()) == list, "Response is not a list!"
+    assert len(response.json()) == 10, "Response has more elements than expected!"
 
 """
     Tests all valid endpoints for allowing POST requests.
@@ -87,6 +87,6 @@ def test_post_request_not_allowed():
             json={"id": "foobar", "title": "Foo Bar", "description": "Just messing up"},
         )    
         # POST request not allowed --> 405.
-        assert response.status_code == 405
+        assert response.status_code == 405, "Response returned wrong! (It should return NOT ALLOWED [405])!"
 
 
