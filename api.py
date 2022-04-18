@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.openapi.utils import get_openapi
 from model import *
+from os.path import exists
 
 app = FastAPI()
 
@@ -86,11 +87,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-print("Starting")
+
 movies = read_movies_from_file()
 ratings = read_ratings_from_file()
 users = read_users_from_file()
-print("Done")
+PREDICTION_FILE_KNN = 'predictions_knn'
+PREDICTION_FILE_SVD = 'predictions_svd'
+
 
 """
     Prepopulate predictions.
@@ -100,8 +103,8 @@ k = []
 s = []
 
 def prepoluate_predictions():
-    k = predict_items(ratings, 'knn', 'predictions_knn')
-    s = predict_items(ratings, 'svd', 'predictions_svd')
+    k = predict_items(ratings, 'knn', PREDICTION_FILE_KNN)
+    s = predict_items(ratings, 'svd', PREDICTION_FILE_SVD)
 
 @app.get("/init")
 async def init_api(background_tasks: BackgroundTasks):
@@ -168,25 +171,25 @@ def get_users():
 @app.get("/recommendations/knn/{user_id}")
 def get_recommendations_knn(user_id: str):
     
-    if(len(k) == 0):
+    if(len(k) == 0) and (not exists("./"+PREDICTION_FILE_KNN)):
         return JSONResponse({"error": "Model not yet computed or not initialized."})
 
     try:
         uid = int(user_id)
-        return JSONResponse(predict_top_for_user(uid, k, 10))
+        return JSONResponse(predict_top_for_user(uid, "./"+PREDICTION_FILE_KNN, 10))
 
     except:
         return JSONResponse(None)
 
 @app.get("/recommendations/svd/{user_id}")
 def get_recommendations_svd(user_id: str, background_tasks: BackgroundTasks):
-    if(len(s) == 0):
+    if(len(s) == 0 and (not exists("./"+PREDICTION_FILE_SVD))):
         print(s)
         return JSONResponse({"error": "Model not yet computed or not initialized."})
 
     try:
         uid = int(user_id)
-        return JSONResponse(predict_top_for_user(uid, s, 10))
+        return JSONResponse(predict_top_for_user(uid, "./"+PREDICTION_FILE_SVD, 10))
 
     except:
         return JSONResponse(None)
