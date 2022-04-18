@@ -51,3 +51,42 @@ def test_get_ratings():
     assert response.status_code == 200
     assert len(response.json()) == rating_count
     assert list(response.json()[0].keys()) == rating_object_keys
+
+
+"""
+    Tests that /recommendations/knn/some_id enpoint is up and working properly.
+"""
+def test_knn_recommendation_endpoints_return_proper():
+    some_id = 571
+    response = client.get("/recommendations/knn/"+str(some_id))
+
+    assert response.status_code == 200
+    assert type(response.json()) == list
+    assert len(response.json()) == 10
+
+"""
+    Tests that /recommendations/svd/some_id enpoint is up and working properly.
+"""
+def test_svd_recommendation_endpoints_return_proper():
+    some_id = 571
+    response = client.get("/recommendations/svd/"+str(some_id))
+
+    assert response.status_code == 200
+    assert type(response.json()) == list
+    assert len(response.json()) == 10
+
+"""
+    Tests all valid endpoints for allowing POST requests.
+"""
+def test_post_request_not_allowed():
+    endpoints = ['/status', '/users', '/ratings', '/movies', '/recommendations/knn/571', '/recommendations/svd/571']
+
+    for endpoint in endpoints:
+        response = client.post(
+            endpoint,
+            json={"id": "foobar", "title": "Foo Bar", "description": "Just messing up"},
+        )    
+        # POST request not allowed --> 405.
+        assert response.status_code == 405
+
+
