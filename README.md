@@ -6,7 +6,7 @@ A movie recommendation engine (which doesn't yet exist) made under FastAPI, Surp
 - Clone the repository
  - Install dependencies (`pip3 install -r requirements.txt` will do).
  - Deploy on a local server (`uvicorn api:app --host localhost --port <some_port> --reload` will do).
- - Navigate to `localhost:8080/docs` and read the docs.
+ - Navigate to `localhost:<some_port>/docs` and read the docs.
 
 ## How to Docker-run:
 - There is a dockerfile 😂.
