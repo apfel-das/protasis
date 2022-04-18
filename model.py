@@ -198,10 +198,7 @@ def predict_top_for_user(uid: int, prediction_file: str, len: int):
 
     items = []
 
-    print("Reached here..")
     top_n = get_top_predictions(predictions, len)
-
-    
 
     # List the recommended items for each user
     for u, user_ratings in top_n.items():
@@ -209,7 +206,6 @@ def predict_top_for_user(uid: int, prediction_file: str, len: int):
             for el in user_ratings:
                 items.append(el[0])
 
-    print(items)
     return items
 
 
